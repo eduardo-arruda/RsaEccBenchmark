@@ -4,10 +4,10 @@ project(RsaEccBenchmark)
 
 find_package(OpenSSL REQUIRED)
 
-add_executable(${PROJECT_NAME} RsaEccBenchmark.cpp EccKeyPair.cpp RsaKeyPair.cpp)
+add_executable(${PROJECT_NAME} RsaEccBenchmark.cpp EccKeyPair/EccKeyPair.cpp RsaKeyPair/RsaKeyPair.cpp)
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${OPENSSL_INCLUDE_DIR} spdlog)
-include_directories(../include)
+include_directories(EccKeyPair RsaKeyPair)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENSSL_LIBRARIES} spdlog)
 
