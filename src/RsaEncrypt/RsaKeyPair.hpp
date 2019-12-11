@@ -1,18 +1,15 @@
 #pragma once
 
-#include <iostream>
 #include <string>
 #include <memory>
 #include <cassert>
 #include <chrono>
 #include <map>
+#include <iostream>
 
-#include <openssl/bn.h>
-using BigNumberPtr = std::unique_ptr<BIGNUM, decltype(&::BN_free)>;
 #include <openssl/rsa.h>
-using RsaKeyPairPtr = std::unique_ptr<RSA, decltype(&::RSA_free)>;
+#include <openssl/bn.h>
 #include <openssl/bio.h>
-using BioPtr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
 #include <openssl/pem.h>
 
 #include "spdlog.h"
@@ -20,6 +17,10 @@ using BioPtr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
 
 namespace RsaEncrypt
 {
+
+using KeyPtr = std::shared_ptr<RSA>;
+using BioPtr = std::shared_ptr<BIO>;
+using BigNumberPtr = std::unique_ptr<BIGNUM, decltype(&::BN_free)>;
 
 enum class KeySize : int
 {
@@ -34,15 +35,17 @@ inline std::map<KeySize, std::string> keySizes = {
 class KeyPair
 {
 private:
-  RsaKeyPairPtr rsaKeyPairPtr;
+  KeyPtr keyPairPtr;
   KeySize keySize;
 
 public:
-  KeyPair(KeyPair const &) = delete; //Disable copies
   KeyPair(KeySize const keySize);
 
-  std::string getPrivateKey();
-  std::string getPublicKey();
+  KeyPtr getKeyPair();
+  BioPtr getPrivateKey();
+  std::string getPrivateKeyPem();
+  BioPtr getPublicKey();
+  std::string getPublicKeyPem();
 };
 
 } // namespace RsaEncrypt

@@ -1,18 +1,15 @@
 #pragma once
 
-#include <iostream>
 #include <string>
 #include <memory>
 #include <cassert>
 #include <chrono>
 #include <map>
+#include <iostream>
 
 #include <openssl/bn.h>
-using BigNumberPtr = std::unique_ptr<BIGNUM, decltype(&::BN_free)>;
 #include <openssl/ec.h>
-using EccKeyPairPtr = std::unique_ptr<EC_KEY, decltype(&::EC_KEY_free)>;
 #include <openssl/bio.h>
-using BioPtr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
 #include <openssl/pem.h>
 
 #include "spdlog.h"
@@ -20,6 +17,10 @@ using BioPtr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
 
 namespace EccEncrypt
 {
+
+using KeyPtr = std::shared_ptr<EC_KEY>;
+using BioPtr = std::shared_ptr<BIO>;
+using BigNumberPtr = std::unique_ptr<BIGNUM, decltype(&::BN_free)>;
 
 enum class Curve : int
 {
@@ -38,15 +39,17 @@ inline std::map<Curve, std::string> curves = {
 class KeyPair
 {
 private:
-  EccKeyPairPtr eccKeyPairPtr;
+  KeyPtr keyPairPtr;
   Curve curve;
 
 public:
-  KeyPair(KeyPair const &) = delete; //Disable copies
   KeyPair(Curve const curve);
 
-  std::string getPrivateKey();
-  std::string getPublicKey();
+  KeyPtr getKeyPair();
+  BioPtr getPrivateKey();
+  std::string getPrivateKeyPem();
+  BioPtr getPublicKey();
+  std::string getPublicKeyPem();
 };
 
 } // namespace EccEncrypt

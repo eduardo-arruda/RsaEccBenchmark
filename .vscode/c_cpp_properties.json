@@ -3,7 +3,8 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/libs/spdlog/src"
+                "${workspaceFolder}/libs/spdlog/src",
+                "${workspaceFolder}/src/**"
             ],
             "defines": [
                 "_DEBUG",
